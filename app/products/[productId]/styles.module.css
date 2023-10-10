@@ -38,7 +38,7 @@
 .productTitle {
 	font-size: 30px;
 	font-weight: 600;
-	word-break: break-all;
+	word-break: break-word;
 }
 
 .productPrice {
@@ -67,7 +67,7 @@
 .rate {
 	font-size: 18px;
 	font-weight: 600;
-	color: rgb(255, 196, 0);
+	color: #ffc400;
 	font-weight: bold;
 }
 
@@ -118,5 +118,10 @@
 @media (max-width: 850px) {
 	.detailsWrapper {
 		flex-direction: column;
+	}
+
+	.right {
+		padding: 0px;
+		flex: 6;
 	}
 }

@@ -34,11 +34,6 @@ export default function Products() {
 	return (
 		<section className={styles.productPage}>
 			<div className="container">
-				{/* GERİ DÖN */}
-				<div className={styles.backButton}>
-					<Link href="/">← Home</Link>
-				</div>
-
 				{/* BAŞLIK */}
 				<h1 className={styles.title}>Products</h1>
 

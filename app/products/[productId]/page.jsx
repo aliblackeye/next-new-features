@@ -19,6 +19,7 @@ export default function ProductDetails() {
 	// State
 	const [product, setProduct] = useState(null);
 	const [loading, setLoading] = useState(true);
+	const [addedToCart, setAddedToCart] = useState(false);
 
 	// Functions
 	const getDetailsByProductId = useCallback(async () => {
@@ -27,6 +28,25 @@ export default function ProductDetails() {
 		setProduct(data);
 		setLoading(false);
 	}, [productId]);
+
+	const handleAddToCart = useCallback(() => {
+		const cartStorage = localStorage.getItem("cart") || "[]";
+		const cart = JSON.parse(cartStorage);
+		const productIndex = cart.findIndex((item) => item.id === product.id);
+		if (productIndex > -1) {
+			cart[productIndex].quantity += 1;
+		} else {
+			cart.push({ ...product, quantity: 1 });
+		}
+		localStorage.setItem("cart", JSON.stringify(cart));
+		
+		setAddedToCart(true);
+
+		setTimeout(() => {
+			setAddedToCart(false);
+		}, 1000);
+
+	}, [product]);
 
 	// Effects
 	useEffect(() => {
@@ -81,7 +101,11 @@ export default function ProductDetails() {
 									<p className={styles.productPrice}>{product?.price} $</p>
 
 									<div className={styles.productButtons}>
-										<button className={styles.addToCart}>Add to Cart</button>
+										<button
+											className={styles.addToCart}
+											onClick={handleAddToCart}>
+											{addedToCart ? "Added to cart!" : "Add to Cart"}
+										</button>
 										<button className={styles.buyNow}>Buy Now</button>
 									</div>
 								</div>

@@ -1,81 +1,150 @@
+"use client";
+
 // Import Next
 import Image from "next/image";
+import Link from "next/link";
 
+// Import React
+import { useCallback, useEffect, useState } from "react";
+
+// Import Styles
 import styles from "./styles.module.css";
 
 export default function Cart() {
-	// Variables
-	const cart = [
-		{
-			id: 1,
-			name: "Product 1",
-			image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-			price: 100,
-			quantity: 1,
+	const [cart, setCart] = useState([]);
+	// Functions
+	const handleQuantity = useCallback(
+		(action, id) => {
+			const newCart = [...cart];
+			const index = newCart.findIndex((item) => item.id === id);
+
+			if (action === "+") {
+				newCart[index].quantity += 1;
+			} else if (action === "-") {
+				newCart[index].quantity -= 1;
+			}
+
+			if (newCart[index].quantity === 0) {
+				newCart.splice(index, 1);
+			}
+
+			setCart(newCart);
+			localStorage.setItem("cart", JSON.stringify(newCart));
 		},
-		{
-			id: 2,
-			name: "Product 2",
-			image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-			price: 100,
-			quantity: 1,
+		[cart]
+	);
+
+	const handleRemoveItem = useCallback(
+		(id) => {
+			const newCart = [...cart];
+			const index = newCart.findIndex((item) => item.id === id);
+			newCart.splice(index, 1);
+			setCart(newCart);
+			localStorage.setItem("cart", JSON.stringify(newCart));
 		},
-		{
-			id: 3,
-			name: "Product 3",
-			image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-			price: 100,
-			quantity: 1,
-		},
-		{
-			id: 4,
-			name: "Product 4",
-			image: "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg",
-			price: 100,
-			quantity: 1,
-		},
-	];
+		[cart]
+	);
+
+	// Effects
+	useEffect(() => {
+		const cartStorage = localStorage.getItem("cart") || "[]";
+		const cart = JSON.parse(cartStorage);
+		setCart(cart);
+	}, []);
 
 	return (
 		<div className={styles.cart}>
 			<div className="container">
-				
 				{/* BAŞLIK */}
 				<h1 className={styles.title}>Cart</h1>
 
-				<div className={styles.cart__container}>
-					<div className={styles.cartItems}>
-						{cart?.map((item, index) => (
-							<div
-								key={index}
-								className={styles.cartItem}>
-								<div className={styles.cartItem__left}>
-									<Image
-										width={1920}
-										height={1080}
-										src={item.image}
-										className={styles.cartItem__image}
-										alt="product"
-									/>
-									<span className={styles.cartItem__name}>{item.name}</span>
-								</div>
-								<div className={styles.cartItem__right}>
-									<span className={styles.cartItem__price}>{item.price} $</span>
+				{cart.length > 0 ? (
+					<div className={styles.cart__container}>
+						<table className={styles.cartItems}>
+							<thead>
+								<tr>
+									<th>Photo</th>
+									<th>Title</th>
+									<th>Price</th>
+									<th>Quantity</th>
+									<th>Total</th>
+									<th>Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								{cart?.map((item, index) => (
+									<tr
+										key={index}
+										className={styles.cartItem}>
+										<td>
+											<Image
+												width={1920}
+												height={1080}
+												src={item.image}
+												className={styles.cartItem__image}
+												alt="product"
+											/>
+										</td>
+										<td>
+											<span className={styles.cartItem__title}>
+												{item.title}
+											</span>
+										</td>
+										<td>
+											<span className={styles.cartItem__price}>
+												{item.price} $
+											</span>
+										</td>
+										<td>
+											<span className={styles.cartItem__quantity}>
+												{item.quantity}x
+											</span>
+										</td>
+										<td>
+											<span className={styles.cartItem__total}>
+												{item.price * item.quantity} $
+											</span>
+										</td>
+										<td>
+											<div className={styles.cartItem__actions}>
+												<span onClick={() => handleQuantity("+", item.id)}>
+													+
+												</span>
+												<span onClick={() => handleQuantity("-", item.id)}>
+													-
+												</span>
+												<span
+													onClick={() => handleRemoveItem(item.id)}
+													className={styles.cartItem__remove}>
+													Kaldır
+												</span>
+											</div>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
 
-									<span className={styles.cartItem__quantity}>
-										{item.quantity}x
-									</span>
-									<div className={styles.cartItem__actions}>
-										<span>+</span>
-										<span>-</span>
-										<span className={styles.cartItem__remove}>Kaldır</span>
-									</div>
-								</div>
-							</div>
-						))}
+						<div className={styles.total}>
+							<span className={styles.total__text}>Total</span>
+							<span className={styles.total__price}>
+								{cart?.reduce(
+									(acc, item) => acc + item.price * item.quantity,
+									0
+								)}
+							</span>
+						</div>
 					</div>
-					<div className={styles.total}>total</div>
-				</div>
+				) : (
+					<div className={styles.emptyCart}>
+						<span>Your cart is empty</span>
+						<Link
+							href="/products"
+							className={styles.emptyCart__button}>
+							Go to products
+						</Link>
+					</div>
+				)}
 			</div>
 		</div>
 	);

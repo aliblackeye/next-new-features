@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 // Import Next
 import Link from "next/link";
@@ -11,10 +11,11 @@ export default function Header() {
 	// Variables
 	const activePage = usePathname();
 
+	const brand = "Next Store";
 	const links = [
 		{
 			label: "Home",
-			href: "/home",
+			href: "/",
 		},
 		{
 			label: "Products",
@@ -30,7 +31,11 @@ export default function Header() {
 		<header className={styles.header}>
 			<div className={`container ${styles.header__container}`}>
 				<div className={styles.left}>
-					<span className={styles.brand}>Next Store</span>
+					<Link
+						href={"/"}
+						className={styles.brand}>
+						{brand}
+					</Link>
 				</div>
 				<div className={styles.right}>
 					<nav className={styles.nav}>
@@ -38,7 +43,7 @@ export default function Header() {
 							<Link
 								href={link.href}
 								key={index}
-								className={activePage === link.href && styles.active}>
+								className={activePage === link.href ? styles.active : ""}>
 								{link.label}
 							</Link>
 						))}

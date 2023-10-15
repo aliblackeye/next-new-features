@@ -12,6 +12,18 @@ import styles from "./styles.module.css";
 
 export default function Cart() {
 	const [cart, setCart] = useState([]);
+
+	const headerColumns = [
+		"Photo",
+		"Title",
+		"Price",
+		"Quantity",
+		"Total",
+		"Actions",
+	];
+
+	const bodyColumnItems = [];
+
 	// Functions
 	const handleQuantity = useCallback(
 		(action, id) => {
@@ -60,23 +72,24 @@ export default function Cart() {
 
 				{cart.length > 0 ? (
 					<div className={styles.cart__container}>
-						<table className={styles.cartItems}>
-							<thead>
-								<tr>
-									<th>Photo</th>
-									<th>Title</th>
-									<th>Price</th>
-									<th>Quantity</th>
-									<th>Total</th>
-									<th>Actions</th>
-								</tr>
-							</thead>
-							<tbody>
+						<div className={styles.cartItems}>
+							<div className={styles.tableHead}>
+								<div className={styles.tableRow}>
+									{headerColumns?.map((item, index) => (
+										<div
+											key={index}
+											className={styles.tableHead__column}>
+											{item}
+										</div>
+									))}
+								</div>
+							</div>
+							<div className={styles.tableBody}>
 								{cart?.map((item, index) => (
-									<tr
-										key={index}
-										className={styles.cartItem}>
-										<td>
+									<div
+										className={styles.cartItem}
+										key={index}>
+										<div className={styles.tableColumn}>
 											<Image
 												width={1920}
 												height={1080}
@@ -84,33 +97,33 @@ export default function Cart() {
 												className={styles.cartItem__image}
 												alt="product"
 											/>
-										</td>
-										<td>
+										</div>
+										<div className={styles.tableColumn}>
 											<span className={styles.cartItem__title}>
 												{item.title}
 											</span>
-										</td>
-										<td>
+										</div>
+										<div className={styles.tableColumn}>
 											<span className={styles.cartItem__price}>
 												{item.price} $
 											</span>
-										</td>
-										<td>
+										</div>
+										<div className={styles.tableColumn}>
 											<span className={styles.cartItem__quantity}>
 												{item.quantity}x
 											</span>
-										</td>
-										<td>
+										</div>
+										<div className={styles.tableColumn}>
 											<span className={styles.cartItem__total}>
-												{item.price * item.quantity} $
+												{(item.price * item.quantity).toFixed(2)} $
 											</span>
-										</td>
-										<td>
+										</div>
+										<div className={styles.tableColumn}>
 											<div className={styles.cartItem__actions}>
-												<span onClick={() => handleQuantity("+", item.id)}>
+												<span className={`${styles.actionButton} ${styles.actionButton__plus}`} onClick={() => handleQuantity("+", item.id)}>
 													+
 												</span>
-												<span onClick={() => handleQuantity("-", item.id)}>
+												<span className={`${styles.actionButton} ${styles.actionButton__minus}`} onClick={() => handleQuantity("-", item.id)}>
 													-
 												</span>
 												<span
@@ -119,11 +132,11 @@ export default function Cart() {
 													Kaldır
 												</span>
 											</div>
-										</td>
-									</tr>
+										</div>
+									</div>
 								))}
-							</tbody>
-						</table>
+							</div>
+						</div>
 
 						<div className={styles.total}>
 							<span className={styles.total__text}>Total</span>
@@ -131,7 +144,8 @@ export default function Cart() {
 								{cart?.reduce(
 									(acc, item) => acc + item.price * item.quantity,
 									0
-								)}
+								).toFixed(2)}
+								$
 							</span>
 						</div>
 					</div>
